@@ -360,6 +360,50 @@ echo "$timestamp | $USER | $tool_name | $input" >> ~/.claude/audit.log
 exit 0
 ```
 
+## Autonomous Context Management
+
+Plugins can autonomously request that Claude Code compact or clear its context window. This is especially useful for long-running autonomous loops or when a major task phase has been completed.
+
+### Triggering Compaction
+
+Use `compactContext: true` to trigger context compaction, which reduces token usage while preserving essential context.
+
+**Example: Trigger compact after 20 iterations**
+```bash
+#!/bin/bash
+# Stop hook for an autonomous loop
+iteration_file="/tmp/loop-count-$$"
+count=$(cat "$iteration_file" 2>/dev/null || echo "0")
+new_count=$((count + 1))
+echo "$new_count" > "$iteration_file"
+
+if [ "$new_count" -ge 20 ]; then
+  # Reset counter and trigger compaction
+  echo "0" > "$iteration_file"
+  echo '{"decision": "block", "reason": "Continuing loop...", "compactContext": true}'
+else
+  echo '{"decision": "block", "reason": "Continuing loop..."}'
+fi
+```
+
+### Clearing Context
+
+Use `clearContext: true` to completely clear the conversation history, which is useful when starting a completely unrelated task or when the current context is no longer relevant.
+
+**Example: Clear context on new task phase**
+```bash
+#!/bin/bash
+# UserPromptSubmit hook
+input=$(cat)
+prompt=$(echo "$input" | jq -r '.user_prompt')
+
+if [[ "$prompt" == "Start new project:"* ]]; then
+  echo '{"clearContext": true, "systemMessage": "Starting fresh for new project"}'
+else
+  echo '{"continue": true}'
+fi
+```
+
 ### Secret Detection
 
 ```bash

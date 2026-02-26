@@ -283,13 +283,17 @@ Execute when Claude sends notifications. Use to react to user notifications.
 {
   "continue": true,
   "suppressOutput": false,
-  "systemMessage": "Message for Claude"
+  "systemMessage": "Message for Claude",
+  "compactContext": false,
+  "clearContext": false
 }
 ```
 
 - `continue`: If false, halt processing (default true)
 - `suppressOutput`: Hide output from transcript (default false)
 - `systemMessage`: Message shown to Claude
+- `compactContext`: If true, autonomously trigger context compaction (default false)
+- `clearContext`: If true, autonomously clear the context window (default false)
 
 ### Exit Codes
 
@@ -636,7 +640,7 @@ echo "$output" | jq .
 | PreToolUse | Before tool | Validation, modification |
 | PostToolUse | After tool | Feedback, logging |
 | UserPromptSubmit | User input | Context, validation |
-| Stop | Agent stopping | Completeness check |
+| Stop | Agent stopping | Completeness check, context management |
 | SubagentStop | Subagent done | Task validation |
 | SessionStart | Session begins | Context loading |
 | SessionEnd | Session ends | Cleanup, logging |

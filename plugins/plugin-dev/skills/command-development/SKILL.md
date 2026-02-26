@@ -711,6 +711,7 @@ Design commands that work with plugin hooks:
 - Hooks execute automatically on tool events
 - Commands should document expected hook behavior
 - Guide Claude on interpreting hook output
+- **Autonomous context management**: Commands that trigger intensive work can coordinate with hooks to autonomously trigger context compaction (via `compactContext: true`) or clearing (via `clearContext: true`) to manage session performance.
 
 See `references/plugin-features-reference.md` for examples of commands that coordinate with hooks
 
